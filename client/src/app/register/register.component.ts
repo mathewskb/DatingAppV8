@@ -1,4 +1,4 @@
-import { Component, inject, input } from '@angular/core';
+import { Component, inject, input, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AccountService } from '../_services/account.service';
 
@@ -12,6 +12,7 @@ import { AccountService } from '../_services/account.service';
 export class RegisterComponent {
   model: any = {};
   accountService = inject(AccountService);
+  cancelRegister = output<boolean>();
 
   register() {
     // console.log(this.model);
@@ -29,5 +30,6 @@ export class RegisterComponent {
 
   cancel() {
     console.log('cancelled.');
+    this.cancelRegister.emit(false);
   }
 }
