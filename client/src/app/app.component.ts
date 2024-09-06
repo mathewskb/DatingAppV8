@@ -14,8 +14,8 @@ import { HomeComponent } from "./home/home.component";
 export class AppComponent implements OnInit {
 
   title = 'DatingApp';
+
   private accountService = inject(AccountService);
-  users: any;
 
   ngOnInit(): void {
     this.setCurrentUser();
@@ -30,4 +30,3 @@ export class AppComponent implements OnInit {
   }
 
 }
-
