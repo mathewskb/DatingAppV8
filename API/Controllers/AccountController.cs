@@ -18,23 +18,25 @@ namespace API.Controllers
             if (await CheckUserExist(registerDto.Username))
                 return BadRequest("UserName already taken!!!");
 
-            using var hmac = new HMACSHA512();
+            return Ok() ;
 
-            var user = new AppUser
-            {
-                UserName = registerDto.Username.ToLower(),
-                PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password)),
-                PasswordSalt = hmac.Key
-            };
+            // using var hmac = new HMACSHA512();
 
-            dataContext.Users.Add(user);
-            await dataContext.SaveChangesAsync();
+            // var user = new AppUser
+            // {
+            //     UserName = registerDto.Username.ToLower(),
+            //     PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password)),
+            //     PasswordSalt = hmac.Key
+            // };
 
-            return new UserDto
-            {
-                Username = user.UserName,
-                Token = tokenService.CreateToken(user)
-            };
+            // dataContext.Users.Add(user);
+            // await dataContext.SaveChangesAsync();
+
+            // return new UserDto
+            // {
+            //     Username = user.UserName,
+            //     Token = tokenService.CreateToken(user)
+            // };
 
         }
 
