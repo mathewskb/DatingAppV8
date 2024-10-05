@@ -10,7 +10,7 @@ export const authGuard: CanActivateFn = (route, state) => {
 
   if (accountService.currentUser()) return true;
   else {
-    toastr.error('You have not pass...');
+    toastr.error('You have not pass! we cant route to the specified route.');
     return false;
   }
 };
