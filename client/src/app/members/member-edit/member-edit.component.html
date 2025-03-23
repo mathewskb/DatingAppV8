@@ -39,7 +39,7 @@
             <div class="card-footer">
                 <button [disabled]="!editForm.dirty" 
                     type="submit" 
-                    form="editForm" 
+                    form="editFormid" 
                     class="btn btn-success col-12"
                 >
                     Save Changes
@@ -52,7 +52,7 @@
         <tabset class="member-tabset">
             <tab heading="About {{member.knownAs}}">
 
-                <form id="editForm" #editForm="ngForm" (ngSubmit)="updateMember()">
+                <form id="editFormid" #editForm="ngForm" (ngSubmit)="updateMember()">
 
                     <h4 class="mt-2">Description</h4>
 
