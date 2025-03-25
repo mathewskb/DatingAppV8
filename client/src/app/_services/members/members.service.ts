@@ -42,8 +42,7 @@ export class MembersService {
 
     return this.http.put(this.baseUrl + 'users', member).pipe(
       tap(() => {
-        this.members.update(members => members.map(m => m.username === member.username 
-          ? member : m))
+        this.members.update(members => members.map(m => m.username === member.username ? member : m))
       })
     )
   }
