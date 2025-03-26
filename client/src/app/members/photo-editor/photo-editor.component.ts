@@ -4,6 +4,8 @@ import { DecimalPipe, NgClass, NgFor, NgIf, NgStyle } from '@angular/common';
 import { FileUploader, FileUploadModule } from 'ng2-file-upload';
 import { AccountService } from '../../_services/account.service';
 import { environment } from '../../../environments/environment';
+import { Photo } from '../../_models/photo';
+import { MembersService } from '../../_services/members/members.service';
 
 @Component({
   selector: 'app-photo-editor',
@@ -12,16 +14,16 @@ import { environment } from '../../../environments/environment';
   templateUrl: './photo-editor.component.html',
   styleUrl: './photo-editor.component.css'
 })
-export class PhotoEditorComponent  implements OnInit{
- 
-  private accountService = inject(AccountService);
+export class PhotoEditorComponent implements OnInit {
 
-  uploader?:FileUploader;
+  private accountService = inject(AccountService);
+  private memberService = inject(MembersService);
+
+  uploader?: FileUploader;
   hasBaseDropZoneOver = false;
   baseUrl = environment.apiUrl;
 
   member = input.required<Member>();
-  
   memberChange = output<Member>();
 
 
@@ -29,29 +31,55 @@ export class PhotoEditorComponent  implements OnInit{
     this.initializeUploader();
   }
 
-  public fileOverBase(e:any):void {
+  public fileOverBase(e: any): void {
     this.hasBaseDropZoneOver = e;
   }
- 
-  initializeUploader(){
+
+  setMainPhoto(photo: Photo) {
+    this.memberService.setMainPhoto(photo).subscribe({
+      next: _ => {
+
+        const user = this.accountService.currentUser();
+
+        if (user) {
+          user.photoUrl = photo.url;
+          this.accountService.setCurrentUser(user);
+        }
+
+        const updatedMember = { ...this.member() };
+        updatedMember.photoUrl = photo.url;
+
+        updatedMember.photos.forEach(p => {
+
+          if (p.isMain) p.isMain = false;
+          if (p.id === photo.id) p.isMain = true;
+
+        });
+
+        this.memberChange.emit(updatedMember);
+      }
+    })
+  }
+
+  initializeUploader() {
 
     this.uploader = new FileUploader({
-      url : this.baseUrl + 'users/add-photo',
-      authToken : 'Bearer ' + this.accountService.currentUser()?.token,
+      url: this.baseUrl + 'users/add-photo',
+      authToken: 'Bearer ' + this.accountService.currentUser()?.token,
       isHTML5: true,
       allowedFileType: ['image'],
-      removeAfterUpload : true,
-      autoUpload : false,
-      maxFileSize : 10 * 1024 * 10,
+      removeAfterUpload: true,
+      autoUpload: false,
+      maxFileSize: 10 * 1024 * 10,
     });
 
-    this.uploader.onAfterAddingFile=(file) => {
+    this.uploader.onAfterAddingFile = (file) => {
       file.withCredentials = false;
     }
 
-    this.uploader.onSuccessItem = (item, response, status, headers) =>{
+    this.uploader.onSuccessItem = (item, response, status, headers) => {
       const photo = JSON.parse(response);
-      const updatedMember = {...this.member()};
+      const updatedMember = { ...this.member() };
       updatedMember.photos.push(photo);
       this.memberChange.emit(updatedMember);
     }

@@ -3,12 +3,13 @@ import { inject, Injectable, signal } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { Member } from '../../_models/member';
 import { of, tap } from 'rxjs';
+import { Photo } from '../../_models/photo';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MembersService {
-  
+
   private http = inject(HttpClient);
   // private accountService = inject(AccountService);
   baseUrl = environment.apiUrl;
@@ -21,7 +22,7 @@ export class MembersService {
 
     // usage of managing the state (caching)
     return this.http.get<Member[]>(this.baseUrl + 'users').subscribe({
-      next : mems => this.members.set(mems)
+      next: mems => this.members.set(mems)
     })
 
   }
@@ -30,13 +31,13 @@ export class MembersService {
     // return this.http.get<Member>(this.baseUrl + 'users/' + username, this.getHttpOptions());
     // caching
     const member = this.members().find(x => x.username === username);
-    if(member !== undefined) return of(member);
+    if (member !== undefined) return of(member);
 
     return this.http.get<Member>(this.baseUrl + 'users/' + username);
   }
 
   // no need of /slash after users as we are expecing the form value in member
-  updateMember(member : Member) {
+  updateMember(member: Member) {
     // return this.http.put(this.baseUrl + 'users', member);
     // caching 
 
@@ -47,6 +48,22 @@ export class MembersService {
     )
   }
 
+  setMainPhoto(photo: Photo) {
+    return this.http.put(this.baseUrl + 'users/set-main-photo/' + photo.id, {}).pipe(
+      tap(() => {
+        this.members.update(members => members.map(m => {
+          if(m.photos.includes(photo)){
+            m.photoUrl = photo.url;
+          }
+          return m;
+        }))
+      })
+    )
+  }
+
+  deletePhoto(photoId: number) {
+    return this.http.delete(this.baseUrl + 'users/delete-photo/' + photoId);
+  }
   // getHttpOptions() {
   //   return {
   //     headers: new HttpHeaders({

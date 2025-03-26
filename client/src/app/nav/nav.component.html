@@ -2,9 +2,6 @@
     <div class="container">
         <a class="navbar-brand" routerLink="/" routerLinkActive="active">Dating App</a>
 
-
-
-
         <ul class="navbar-nav me-auto mb-2 mb-md-0">
 
             @if(accountService.currentUser()){
@@ -27,7 +24,11 @@
         @if(accountService.currentUser()){
 
         <div dropdown class="dropdown">
-            <a dropdownToggle class="dropdown-toggle text-light text-decoration-none">Welcome {{accountService.currentUser()?.username | titlecase}}</a>
+            <img  src="{{accountService.currentUser()?.photoUrl || './assets/user.png'}}" 
+            alt="profile picture">
+
+            <a dropdownToggle class="dropdown-toggle text-light text-decoration-none">
+                Welcome {{accountService.currentUser()?.username | titlecase}}</a>
             <div *dropdownMenu class="dropdown-menu">
                 <a class="dropdown-item" routerLink="/member/edit">Edit profile</a>
                 <div class="dropdown-divider"></div>
