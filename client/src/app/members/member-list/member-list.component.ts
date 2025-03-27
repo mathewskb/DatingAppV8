@@ -10,6 +10,7 @@ import { MemberCardComponent } from '../member-card/member-card.component';
   styleUrl: './member-list.component.css'
 })
 export class MemberListComponent implements OnInit {
+  
   memberService = inject(MembersService);
   
   ngOnInit(): void {
