@@ -35,11 +35,10 @@ export class PhotoEditorComponent implements OnInit {
     this.hasBaseDropZoneOver = e;
   }
 
-  deletePhoto(photo : Photo)
-  {
+  deletePhoto(photo: Photo) {
     this.memberService.deletePhoto(photo).subscribe({
-      next : _ => {
-        const  updatedMember = {...this.member()};
+      next: _ => {
+        const updatedMember = { ...this.member() };
         updatedMember.photos = updatedMember.photos.filter(x => x.id !== photo.id);
         this.memberChange.emit(updatedMember);
       }
@@ -91,6 +90,23 @@ export class PhotoEditorComponent implements OnInit {
       const updatedMember = { ...this.member() };
       updatedMember.photos.push(photo);
       this.memberChange.emit(updatedMember);
+
+      if (photo.isMain) {
+        const user = this.accountService.currentUser();
+        if (user) {
+          user.photoUrl = photo.url;
+          this.accountService.setCurrentUser(user);
+        }
+
+        updatedMember.photoUrl = photo.url;
+        updatedMember.photos.forEach(p => {
+          if (p.isMain) p.isMain = false;
+          if (p.id === photo.id) p.isMain = true;
+
+        });
+
+        this.memberChange.emit(updatedMember);
+      }
     }
   }
 }
